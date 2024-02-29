@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Mouse Item
+  - Exit
+  - Role
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 2398628691
+    locked: 0
+  - name: Text
+    uniqueID: 3907636381
+    locked: 0
+  - name: Role
+    uniqueID: 2316088973
+    locked: 0
+  - name: Smoke
+    uniqueID: 1330648643
+    locked: 0
+  - name: Water
+    uniqueID: 2965704659
+    locked: 0
