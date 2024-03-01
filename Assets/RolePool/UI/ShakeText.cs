@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using RolePool.Game;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace RolePool.UI
@@ -20,15 +22,36 @@ namespace RolePool.UI
 
         [Header("文字表现")] [SerializeField] private float y;
         [SerializeField] private float duration;
-        [SerializeField] private float strength = 3F;
+        [SerializeField] private float baseStrength = 3F;
+        [SerializeField] private float space;
+        [SerializeField] private float step = 0.01f;
+
+        private bool _isRun;
+
+        private float _strengthForce;
+
+        private void Awake()
+        {
+            FindObjectOfType<BuildRoleControl>().OnHurtEventHandle += OnHurtEvent;
+        }
+
+        private void OnHurtEvent(IRole obj)
+        {
+            if (_isRun)
+            {
+                _strengthForce += step;
+                return;
+            }
+            _isRun = true;
+            Run(baseStrength + _strengthForce);
+            _strengthForce = 0f;
+        }
 
         private void Start()
         {
             CreateShakeText(content);
-            Run();
         }
 
-        [SerializeField] private float space;
 
         private void CreateShakeText(string message)
         {
@@ -40,6 +63,7 @@ namespace RolePool.UI
                 _textMeshPros.Add(text);
                 text.fontSize = fontSize;
                 text.text = str.ToString();
+                text.color = fontColor;
                 text.rectTransform.sizeDelta = new Vector2(text.preferredWidth, text.preferredHeight);
                 len += text.preferredWidth;
             }
@@ -54,20 +78,18 @@ namespace RolePool.UI
             }
         }
 
-        private void Run()
+        private void Run(float strengthF)
         {
             foreach (var text in _textMeshPros)
             {
                 text.color = fontColor;
-                DOTween.Shake(() => text.rectTransform.anchoredPosition, v => text.rectTransform.anchoredPosition = v, duration, strength).SetLoops(-1);
-
+                DOTween.Shake(() => text.rectTransform.anchoredPosition, v => text.rectTransform.anchoredPosition = v, duration, strengthF) //.SetLoops(-1);
+                    .OnComplete(() => _isRun = false);
                 if (!randomColor) return;
                 var color = Random.ColorHSV();
                 color.a = Random.Range(alphaRange.x, alphaRange.y);
                 text.DOColor(color, duration).SetLoops(-1, LoopType.Yoyo);
             }
         }
-        
-        
     }
 }

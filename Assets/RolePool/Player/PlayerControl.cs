@@ -1,4 +1,6 @@
 ﻿using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using RolePool.Game;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -17,15 +19,22 @@ namespace RolePool.Player
         [SerializeField] private Vector2 offset;
 
         [SerializeField] private GameObject shakeText;
+        [SerializeField] private float speed;
+
+        public float Speed => speed;
 
         private WaterFallControl _waterFallControl;
         private bool _isRun;
+
+        private TweenerCore<float, float, FloatOptions> _task;
 
         private void Awake()
         {
             _mainCamera = Camera.main;
             _waterFallControl = FindObjectOfType<WaterFallControl>();
+            Application.targetFrameRate = 90;
         }
+
 
         // private IEnumerator Start()
         // {
@@ -53,7 +62,7 @@ namespace RolePool.Player
 
         private void Update()
         {
-            player.transform.position = GetMousePosition();
+            player.transform.position = Vector3.MoveTowards(player.transform.position, GetMousePosition(), Time.deltaTime * speed);
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -68,6 +77,12 @@ namespace RolePool.Player
             if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
         }
 
+        public void SetSpeed(float startValue, float endValue, float duration)
+        {
+            _task?.Kill();
+            speed = startValue;
+            _task = DOTween.To(() => speed, v => speed = v, endValue, duration);
+        }
 
         private void DoRotate()
         {

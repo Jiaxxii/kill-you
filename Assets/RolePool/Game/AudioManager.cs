@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Pool;
+using UnityEngine.Serialization;
 
 namespace RolePool.Game
 {
@@ -10,6 +15,10 @@ namespace RolePool.Game
     {
         private ObjectPool<AudioSource> _objectPool;
         private readonly Dictionary<AudioSource, AudioState> _audioState = new();
+
+        [SerializeField] private AudioMixerGroup audioMixerGroup;
+
+        private TweenerCore<float, float, FloatOptions> _task;
 
         private class AudioState
         {
@@ -34,6 +43,7 @@ namespace RolePool.Game
         private AudioSource CreateFunc()
         {
             var au = gameObject.AddComponent<AudioSource>();
+            au.outputAudioMixerGroup = audioMixerGroup;
             _audioState.Add(au, new AudioState(false));
             return au;
         }
@@ -53,6 +63,21 @@ namespace RolePool.Game
             au.Play();
         }
 
+        public void SetPitch(float startValue, float endValue, float duration)
+        {
+            _task?.Kill();
+            SetValue(startValue);
+            _task = DOTween.To(GetValue, SetValue, endValue, duration);
+        }
+
+
+        private void SetValue(float value) => audioMixerGroup.audioMixer.SetFloat("SoundPitch", value);
+
+        public float GetValue()
+        {
+            audioMixerGroup.audioMixer.GetFloat("SoundPitch", out var value);
+            return value;
+        }
 
         private IEnumerator Start()
         {

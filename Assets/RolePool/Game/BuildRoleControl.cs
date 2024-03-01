@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
@@ -15,12 +13,33 @@ namespace RolePool.Game
         private AudioManager _audioManager;
         private ParticleManager _particleManager;
 
-        [SerializeField] private string[] resourcesRoleName;
+        // [SerializeField] private string[] resourcesRoleName;
 
         [SerializeField] private float fallY;
         [SerializeField] private Vector2 range;
 
-        [SerializeField] private AudioClip ai, sin, yuk;
+        // [SerializeField] private AudioClip ai, sin, yuk;
+        // [SerializeField] private AudioClip 上位男, 女客人, 心乃;
+
+        [SerializeField] private Audio[] resourceAudio;
+
+        public event Action<IRole> OnHurtEventHandle;
+
+        [Serializable]
+        private class Audio
+        {
+            [SerializeField] private string name;
+            [SerializeField] private AudioClip[] clips;
+
+            public string Name => name;
+            public bool IsCompare(string auName) => name == auName;
+
+            public AudioClip GetClip(int index = -1)
+            {
+                if (index == -1) index = Random.Range(0, clips.Length);
+                return clips[index % clips.Length];
+            }
+        }
 
 
         private void Awake()
@@ -37,7 +56,7 @@ namespace RolePool.Game
 
         private IRole CreateFunc()
         {
-            var role = _resourcesRole.GetRole(resourcesRoleName[Random.Range(0, resourcesRoleName.Length)]);
+            var role = _resourcesRole.GetRole(resourceAudio[Random.Range(0, resourceAudio.Length)].Name);
             role.OnReleaseEventHandler += () => _objectPool.Release(role);
             role.OnCollisionEnterEventHandler += OnCollisionEnterEvent;
             return role;
@@ -51,19 +70,30 @@ namespace RolePool.Game
 
         public void Hurt(IRole role)
         {
-            var clip = role.Name switch
+            AudioClip audioClip = null;
+            foreach (var au in resourceAudio)
             {
-                "ai" => ai,
-                "sin" => sin,
-                "yuk" => yuk,
-                _ => null
-            };
+                if (!au.IsCompare(role.Name)) continue;
+                audioClip = au.GetClip();
+                break;
+            }
+            // var clip = role.Name switch
+            // {
+            //     "ai" => ai,
+            //     "sin" => sin,
+            //     "yuk" => yuk,
+            //     "上位男" => 上位男,
+            //     "女客人" => 女客人,
+            //     "心乃" => 心乃,
+            //     _ => null
+            // };
 
-            if (clip == null) return;
+            if (audioClip == null) return;
 
-            _audioManager.Play(clip);
+            _audioManager.Play(audioClip);
 
             _particleManager.Play( /*other.transform.position*/ role.Transform.position);
+            OnHurtEventHandle?.Invoke(role);
         }
 
 
