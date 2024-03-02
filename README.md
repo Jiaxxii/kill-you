@@ -6,9 +6,9 @@
   
 ## 项目结构  
   
-整个项目包含以下十一个脚本：  
+整个项目包含以下脚本：  
   
-- **Expand.cs**：包含一些拓展方法，但当前项目中未使用。  
+- **Expand.cs**：提供一些拓展方法，比如随机获取数组中的一项。  
 - **AudioManager.cs**：用于播放角色的音效，使用了 Unity 自带的对象池（ObjectPool<T>）。  
 - **BuildRoleControl.cs**：负责生成角色，同样使用了对象池技术。  
 - **ParticleManager.cs**：管理粒子效果的创建，也使用了对象池。  
@@ -19,6 +19,9 @@
 - **PlayerControl.cs**：控制开水壶的移动，并在 Update() 方法中监听按键输入（如按下“Tab”关闭抖动文字，按下“ESC”退出游戏）。  
 - **ShakeText.cs**：生成并控制抖动的文字效果。  
 - **TimeSetControl.cs**：允许玩家通过按下/释放"Space"按键来控制游戏的速度。
+- **FloatTextControl.cs**：管理悬浮文字的效果，也使用了对象池。
+- **FloatText.cs**：悬浮文字，用于显示角色的尖叫。
+- **PlayGame.cs**：记录玩家每次运行游戏的时间等，部分情况下可能不会记录（比如游戏崩溃了）
 
 ## 额外说明  
   
