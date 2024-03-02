@@ -8,7 +8,7 @@ namespace RolePool.Game
 {
     public class TimeSetControl : MonoBehaviour
     {
-        [SerializeField] private float lowTimeValue = 0.6F;
+        [SerializeField] private float lowTimeValue = 0.5F;
         [SerializeField] private float duration;
 
         [SerializeField] private TextMeshProUGUI textMeshProUGUI;

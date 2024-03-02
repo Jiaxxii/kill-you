@@ -14,7 +14,7 @@ namespace RolePool.Game
         public Transform Transform { get; }
         public Sprite[] Body { get; }
 
-        public event Action OnReleaseEventHandler;
+        public event Action<IRole> OnReleaseEventHandler;
         public event Action<IRole, Collision2D> OnCollisionEnterEventHandler;
         public event Action<IRole, Collider2D> OnTriggerEnterEventHandler;
 
@@ -36,7 +36,7 @@ namespace RolePool.Game
         public Transform Transform { get; private set; }
         public Sprite[] Body { get; private set; }
 
-        public event Action OnReleaseEventHandler;
+        public event Action<IRole> OnReleaseEventHandler;
 
         public event Action<IRole, Collision2D> OnCollisionEnterEventHandler;
         public event Action<IRole, Collider2D> OnTriggerEnterEventHandler;
@@ -68,16 +68,26 @@ namespace RolePool.Game
 
         public void OnGet()
         {
+            ResetRigidBody2D();
             SetRandomBody();
             GameObject.SetActive(true);
 
             Invoke(nameof(OnRelease), UnityEngine.Random.Range(10, 20));
         }
 
+        public void ResetRigidBody2D()
+        {
+            Rb.velocity = Vector2.zero; // 重置速度  
+            Rb.angularVelocity = 0f; // 重置角速度  
+            Rb.rotation = 0f; // 假设你是以Z轴作为旋转轴
+            Transform.eulerAngles = Vector3.zero;
+
+            // 可能还需要其他属性的重置，具体根据你的游戏需求  
+        }
 
         private void OnRelease()
         {
-            OnReleaseEventHandler?.Invoke();
+            OnReleaseEventHandler?.Invoke(this);
             GameObject.SetActive(false);
         }
 
@@ -106,7 +116,5 @@ namespace RolePool.Game
             if (!obj.CompareTag("Mouse Item")) return;
             Animator.Play("ai_hurt");
         }
-        
-        
     }
 }
