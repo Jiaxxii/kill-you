@@ -28,9 +28,13 @@ namespace RolePool.Game
 
         [SerializeField] private Audio[] resourceAudio;
 
-        // private readonly Dictionary<IRole, RoleState> _hurtMap = new();
 
-        //  private readonly List<(IRole role, RoleState roleState)> _roles = new();
+        [Header("弹跳")] [SerializeField] private Transform playerTransform;
+        [SerializeField] private Vector2 distanceRange;
+
+        [SerializeField] private Vector2 addForceRange;
+
+
         public event Action<IRole> OnRolStateChangeEventHandle;
 
         public int RoleCount { get; private set; }
@@ -55,31 +59,6 @@ namespace RolePool.Game
                 return clips[index % clips.Length];
             }
         }
-
-        // public enum State
-        // {
-        //     Create,
-        //     Ready,
-        //     Injury
-        // }
-        //
-        // public class RoleState
-        // {
-        //     public RoleState(State state, int injuryCount)
-        //     {
-        //         State = state;
-        //         InjuryCount = injuryCount;
-        //     }
-        //
-        //     public State State { get; set; }
-        //     public int InjuryCount { get; set; }
-        //
-        //     public void ReSet()
-        //     {
-        //         State = State.Ready;
-        //         InjuryCount = 0;
-        //     }
-        // }
 
 
         private void Awake()
@@ -111,6 +90,12 @@ namespace RolePool.Game
             return role;
         }
 
+        private float GetForce(Vector3 player, Vector3 role, Vector2 rangeDistance, Vector2 forceRange)
+        {
+            var distance = Vector3.Distance(player, role);
+            return Mathf.Clamp(distance.MapFloat(rangeDistance.x, rangeDistance.y, forceRange.y, forceRange.x), 0, forceRange.y);
+        }
+
         private void OnCollisionEnterEvent(IRole role, Collision2D other)
         {
             if (!other.gameObject.CompareTag("Mouse Item")) return;
@@ -129,19 +114,25 @@ namespace RolePool.Game
 
             if (audioClip == null) return;
 
+            var addForce = GetForce(playerTransform.position, role.Transform.position, distanceRange, addForceRange);
+
+            // 如果是水壶在上
+            var direction = playerTransform.position.y >= role.Transform.position.y
+                ? (playerTransform.position - role.Transform.position).normalized
+                : (role.Transform.position - playerTransform.position).normalized;
+            
+            role.Rb.AddForce(direction * addForce, ForceMode2D.Impulse);
             _audioManager.Play(audioClip);
 
             _particleManager.Play( /*other.transform.position*/ role.Transform.position);
-            // _hurtMap[role].State = State.Injury;
-            // _hurtMap[role].InjuryCount++;
-            OnHurtEventHandle?.Invoke(role);
             HurtCount++;
-            OnRolStateChangeEventHandle?.Invoke(role);
-            UpDataUi(role);
 
             SetText(role.Transform.position);
-            // Debug.Log(other.position);
-            // Debug.Break();
+
+            OnHurtEventHandle?.Invoke(role);
+            OnRolStateChangeEventHandle?.Invoke(role);
+
+            UpDataUi(role);
         }
 
         private void SetText(Vector2 position)
