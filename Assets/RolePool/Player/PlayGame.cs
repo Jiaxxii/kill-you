@@ -15,7 +15,10 @@ namespace RolePool.Player
         {
             var file = Path.Combine(Application.persistentDataPath, "run game.json");
 
-            if (!File.Exists(file)) File.Create(file).Close();
+            if (!File.Exists(file))
+            {
+                using var _ = File.Create(file);
+            }
 
             Application.quitting += () =>
             {

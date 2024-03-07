@@ -11,7 +11,6 @@ namespace RolePool.Game
         [SerializeField] private float lowTimeValue = 0.5F;
         [SerializeField] private float duration;
 
-        [SerializeField] private TextMeshProUGUI textMeshProUGUI;
         private bool _isLowTime;
 
         private TimeState _timeState;
@@ -46,8 +45,6 @@ namespace RolePool.Game
             {
                 SharpTime();
             }
-
-            textMeshProUGUI.text = $"时间:{Time.timeScale:f2}";
         }
 
 

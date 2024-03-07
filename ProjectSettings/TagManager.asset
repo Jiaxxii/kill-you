@@ -47,9 +47,6 @@ TagManager:
   - name: Ground
     uniqueID: 2398628691
     locked: 0
-  - name: Text
-    uniqueID: 3907636381
-    locked: 0
   - name: Role
     uniqueID: 2316088973
     locked: 0
@@ -58,4 +55,7 @@ TagManager:
     locked: 0
   - name: Water
     uniqueID: 2965704659
+    locked: 0
+  - name: Text
+    uniqueID: 3907636381
     locked: 0
