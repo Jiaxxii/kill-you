@@ -27,6 +27,7 @@ namespace RolePool.Player
         private WaterFallControl _waterFallControl;
         private bool _isRun;
 
+        private bool _isCursorVisible = true;
         private TweenerCore<float, float, FloatOptions> _task;
 
         private void Awake()
@@ -35,6 +36,7 @@ namespace RolePool.Player
             _waterFallControl = FindObjectOfType<WaterFallControl>();
             Application.targetFrameRate = 90;
         }
+        
 
 
         // private IEnumerator Start()
@@ -73,6 +75,7 @@ namespace RolePool.Player
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 shakeText.SetActive(!shakeText.activeSelf);
+                Cursor.visible = _isCursorVisible = !_isCursorVisible;
             }
 
             if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();

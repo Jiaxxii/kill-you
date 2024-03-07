@@ -72,16 +72,17 @@ namespace RolePool.Game
             SetRandomBody();
             GameObject.SetActive(true);
 
+
             Invoke(nameof(OnRelease), UnityEngine.Random.Range(10, 20));
         }
 
-        public void ResetRigidBody2D()
+        private void ResetRigidBody2D()
         {
             Rb.velocity = Vector2.zero; // 重置速度  
             Rb.angularVelocity = 0f; // 重置角速度  
             Rb.rotation = 0f; // 假设你是以Z轴作为旋转轴
             Transform.eulerAngles = Vector3.zero;
-
+            Rb.freezeRotation = true;
             // 可能还需要其他属性的重置，具体根据你的游戏需求  
         }
 
@@ -114,6 +115,7 @@ namespace RolePool.Game
         private void Hurt(GameObject obj)
         {
             if (!obj.CompareTag("Mouse Item")) return;
+            Rb.freezeRotation = false;
             Animator.Play("ai_hurt");
         }
     }

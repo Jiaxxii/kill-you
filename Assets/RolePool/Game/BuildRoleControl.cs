@@ -120,7 +120,7 @@ namespace RolePool.Game
             var direction = playerTransform.position.y >= role.Transform.position.y
                 ? (playerTransform.position - role.Transform.position).normalized
                 : (role.Transform.position - playerTransform.position).normalized;
-            
+
             role.Rb.AddForce(direction * addForce, ForceMode2D.Impulse);
             _audioManager.Play(audioClip);
 
@@ -156,9 +156,21 @@ namespace RolePool.Game
             while (true)
             {
                 var role = _objectPool.Get();
-                role.SetPosition(fallY, range, Random.Range(0.05f, 0.95f));
+                role.SetPosition(fallY, range, Random.Range(0.03f, 0.97f));
 
-                yield return new WaitForSeconds(Random.Range(0.25f, 1.5f));
+                yield return WaitForTime(Random.Range(0.2f, 1.25f));
+            }
+
+            // ReSharper disable once IteratorNeverReturns
+        }
+
+
+        private static IEnumerator WaitForTime(float timer)
+        {
+            while (timer >= 0f)
+            {
+                timer -= Time.deltaTime;
+                yield return null;
             }
         }
     }
